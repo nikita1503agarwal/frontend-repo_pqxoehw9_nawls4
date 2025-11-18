@@ -1,18 +1,436 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Flames App</title>
-    <link rel="icon" type="image/x-icon" href="favicon.svg">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/geist@1.0.0/dist/fonts/geist-sans/style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/geist@1.0.0/dist/fonts/geist-mono/style.css">
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cosmic Cash - Slot Machine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <script type="module" src="https://unpkg.com/@splinetool/viewer@latest/build/spline-viewer.js"></script>
+  <style>
+    :root {
+      --neon-pink: #ff3fa4;
+      --neon-cyan: #00e5ff;
+      --neon-gold: #ffd200;
+      --deep-purple: #0b032d;
+    }
+    html, body {
+      height: 100%;
+      background: radial-gradient(1200px 800px at 50% -10%, rgba(185,0,255,0.25), transparent 60%),
+                  radial-gradient(1000px 700px at 100% 0%, rgba(0,255,255,0.18), transparent 60%),
+                  #050016;
+      color: #e7e5ff;
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    .cosmic-card {
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(20,10,50,0.75), rgba(10,5,30,0.85));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow:
+        0 10px 35px rgba(0,0,0,0.5),
+        0 0 0 1px rgba(255,255,255,0.06) inset;
+    }
+    .neon-border {
+      position: relative;
+      border-radius: 1.25rem;
+    }
+    .neon-border::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      background: conic-gradient(from 180deg at 50% 50%, var(--neon-pink), var(--neon-cyan), var(--neon-gold), var(--neon-pink));
+      filter: blur(12px);
+      opacity: 0.6;
+      z-index: -1;
+    }
+    .reel-cell {
+      text-shadow:
+        0 0 10px rgba(255, 255, 255, 0.25),
+        0 0 20px rgba(0, 229, 255, 0.25);
+      user-select: none;
+    }
+    .spin-button {
+      transition: transform 0.05s ease, box-shadow 0.2s ease;
+    }
+    .spin-button:active {
+      transform: translateY(1px);
+    }
+    .status-box {
+      min-height: 2.25rem;
+    }
+    .glow-text {
+      text-shadow:
+        0 0 10px rgba(255, 208, 0, 0.3),
+        0 0 30px rgba(255, 63, 164, 0.15);
+    }
+    .soft-gradient {
+      background: linear-gradient(90deg, rgba(255,63,164,0.12), rgba(0,229,255,0.12));
+    }
+    .gold-gradient {
+      background: linear-gradient(180deg, rgba(255,210,0,0.18), rgba(255,210,0,0.05));
+    }
+    .flicker {
+      animation: flicker 3s infinite;
+    }
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.95; }
+      70% { opacity: 0.85; }
+      80% { opacity: 0.98; }
+      90% { opacity: 0.92; }
+    }
+  </style>
+</head>
+<body class="overflow-x-hidden">
+
+  <!-- Hero with Spline -->
+  <section class="relative w-full h-[40vh] md:h-[50vh] overflow-hidden">
+    <div class="absolute inset-0">
+      <spline-viewer url="https://prod.spline.design/EF7JOSsHLk16Tlw9/scene.splinecode" style="width:100%;height:100%;"></spline-viewer>
+    </div>
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#050016]/40 to-[#050016] pointer-events-none"></div>
+    <div class="relative h-full max-w-6xl mx-auto px-6 flex items-end pb-8">
+      <div class="backdrop-blur-[1px]">
+        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight glow-text">
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-cyan-300 to-yellow-300">Cosmic Cash</span>
+        </h1>
+        <p class="mt-2 text-cyan-100/80 max-w-xl">
+          Retro-futuristic slots in deep space. Align the center payline to win — chase the 🚀 Wilds and 🛸 Jackpots!
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Game -->
+  <main class="relative -mt-10 md:-mt-14 pb-16">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="neon-border cosmic-card rounded-2xl p-6 md:p-8 z-20">
+        <!-- Header: Credits & Bet -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div class="flex items-center gap-6 w-full">
+            <div class="flex-1 soft-gradient rounded-xl p-4 border border-white/10">
+              <div class="text-sm uppercase tracking-wider text-cyan-200/70">Credits</div>
+              <div id="creditsDisplay" class="mt-1 text-2xl md:text-3xl font-black text-yellow-300 glow-text">1000</div>
+            </div>
+            <div class="flex-1 soft-gradient rounded-xl p-4 border border-white/10">
+              <div class="text-sm uppercase tracking-wider text-cyan-200/70">Bet</div>
+              <div class="mt-1 flex items-center gap-3">
+                <button id="betDown" class="h-9 w-9 rounded-lg border border-white/10 text-cyan-200 hover:text-white hover:border-cyan-400/40 disabled:opacity-50 disabled:cursor-not-allowed">−</button>
+                <div id="betDisplay" class="text-2xl md:text-3xl font-black text-pink-300 glow-text">100</div>
+                <button id="betUp" class="h-9 w-9 rounded-lg border border-white/10 text-cyan-200 hover:text-white hover:border-cyan-400/40 disabled:opacity-50 disabled:cursor-not-allowed">+</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="w-full md:w-auto">
+            <button id="spinButton" class="spin-button w-full md:w-56 h-14 rounded-xl bg-gradient-to-r from-pink-500 via-cyan-500 to-yellow-400 text-[#0b032d] font-extrabold text-xl uppercase tracking-wider shadow-[0_10px_30px_rgba(0,229,255,0.35)] hover:shadow-[0_15px_40px_rgba(0,229,255,0.5)] focus:outline-none focus:ring-2 focus:ring-cyan-300">
+              SPIN
+            </button>
+          </div>
+        </div>
+
+        <!-- Reels -->
+        <div class="mt-8 grid grid-cols-3 gap-4">
+          <!-- Each column represents a reel (3 rows each) -->
+          <div class="gold-gradient rounded-xl p-3 border border-yellow-300/10 shadow-lg shadow-yellow-500/10">
+            <div class="grid grid-rows-3 gap-3">
+              <div class="reel-cell text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="0" data-row="0">🌟</div>
+              <div class="reel-cell text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="0" data-row="1">🪐</div>
+              <div class="reel-cell text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="0" data-row="2">💎</div>
+            </div>
+          </div>
+
+          <div class="gold-gradient rounded-xl p-3 border border-yellow-300/10 shadow-lg shadow-yellow-500/10">
+            <div class="grid grid-rows-3 gap-3">
+              <div class="reel-cell text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="1" data-row="0">💎</div>
+              <div class="reel-cell text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="1" data-row="1">🌟</div>
+              <div class="reel-cell text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="1" data-row="2">🛸</div>
+            </div>
+          </div>
+
+          <div class="gold-gradient rounded-xl p-3 border border-yellow-300/10 shadow-lg shadow-yellow-500/10">
+            <div class="grid grid-rows-3 gap-3">
+              <div class="reel-cell text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="2" data-row="0">🪐</div>
+              <div class="reel-cell text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="2" data-row="1">🚀</div>
+              <div class="reel-cell text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="2" data-row="2">🌟</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status / Messages -->
+        <div class="mt-6 rounded-xl border border-white/10 soft-gradient p-4 status-box">
+          <div id="statusMessage" class="text-center font-semibold tracking-wide text-cyan-100">Place Your Bet!</div>
+        </div>
+
+        <!-- Legend -->
+        <div class="mt-6 grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
+          <div class="rounded-lg border border-white/10 bg-black/20 p-3 flex items-center justify-center gap-2">
+            <span>🌟</span><span class="text-cyan-100/80">x3 = 3x</span>
+          </div>
+          <div class="rounded-lg border border-white/10 bg-black/20 p-3 flex items-center justify-center gap-2">
+            <span>🪐</span><span class="text-cyan-100/80">x3 = 5x</span>
+          </div>
+          <div class="rounded-lg border border-white/10 bg-black/20 p-3 flex items-center justify-center gap-2">
+            <span>💎</span><span class="text-cyan-100/80">x3 = 10x</span>
+          </div>
+          <div class="rounded-lg border border-white/10 bg-black/20 p-3 flex items-center justify-center gap-2">
+            <span>🚀</span><span class="text-cyan-100/80">x3 = 20x (Wild)</span>
+          </div>
+          <div class="rounded-lg border border-white/10 bg-black/20 p-3 flex items-center justify-center gap-2">
+            <span>🛸</span><span class="text-cyan-100/80">x3 = 50x (Jackpot)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Game State
+    const symbols = [
+      { icon: '🌟', name: 'star', payout: 3, weight: 40 },   // Low
+      { icon: '🪐', name: 'planet', payout: 5, weight: 30 }, // Medium
+      { icon: '💎', name: 'diamond', payout: 10, weight: 20 }, // High
+      { icon: '🚀', name: 'wild', payout: 20, weight: 8 },   // Wild
+      { icon: '🛸', name: 'jackpot', payout: 50, weight: 2 } // Jackpot
+    ];
+
+    const WILD = 'wild';
+    const JACKPOT = 'jackpot';
+
+    let credits = 1000;
+    let bet = 100;
+    const minBet = 10;
+    const maxBet = 500;
+    const betStep = 10;
+
+    // UI Elements
+    const creditsDisplay = document.getElementById('creditsDisplay');
+    const betDisplay = document.getElementById('betDisplay');
+    const betUp = document.getElementById('betUp');
+    const betDown = document.getElementById('betDown');
+    const spinButton = document.getElementById('spinButton');
+    const statusMessage = document.getElementById('statusMessage');
+
+    const reelCells = [
+      [
+        document.querySelector('[data-reel="0"][data-row="0"]'),
+        document.querySelector('[data-reel="0"][data-row="1"]'),
+        document.querySelector('[data-reel="0"][data-row="2"]')
+      ],
+      [
+        document.querySelector('[data-reel="1"][data-row="0"]'),
+        document.querySelector('[data-reel="1"][data-row="1"]'),
+        document.querySelector('[data-reel="1"][data-row="2"]')
+      ],
+      [
+        document.querySelector('[data-reel="2"][data-row="0"]'),
+        document.querySelector('[data-reel="2"][data-row="1"]'),
+        document.querySelector('[data-reel="2"][data-row="2"]')
+      ],
+    ];
+
+    let spinning = false;
+
+    function updateUI() {
+      creditsDisplay.textContent = credits;
+      betDisplay.textContent = bet;
+      betDown.disabled = spinning || bet <= minBet;
+      betUp.disabled = spinning || bet >= maxBet;
+      spinButton.disabled = spinning;
+      spinButton.classList.toggle('opacity-60', spinning);
+      spinButton.classList.toggle('cursor-not-allowed', spinning);
+    }
+
+    function setStatus(text, type = 'info') {
+      statusMessage.textContent = text;
+      statusMessage.className = 'text-center font-semibold tracking-wide';
+
+      if (type === 'info') {
+        statusMessage.classList.add('text-cyan-100');
+      } else if (type === 'warn') {
+        statusMessage.classList.add('text-yellow-200');
+      } else if (type === 'error') {
+        statusMessage.classList.add('text-pink-200');
+      } else if (type === 'success') {
+        statusMessage.classList.add('text-green-200');
+      }
+      if (type === 'jackpot') {
+        statusMessage.classList.add('text-yellow-200', 'flicker');
+      } else {
+        statusMessage.classList.remove('flicker');
+      }
+    }
+
+    function weightedRandomSymbol() {
+      const totalWeight = symbols.reduce((sum, s) => sum + s.weight, 0);
+      let r = Math.random() * totalWeight;
+      for (const s of symbols) {
+        if (r < s.weight) return s;
+        r -= s.weight;
+      }
+      return symbols[0];
+    }
+
+    function createSpinResult() {
+      // Generate a 3x3 grid: result[reel][row]
+      const result = [[], [], []];
+      for (let reel = 0; reel < 3; reel++) {
+        for (let row = 0; row < 3; row++) {
+          result[reel][row] = weightedRandomSymbol();
+        }
+      }
+      return result;
+    }
+
+    function evaluateMiddleRow(result) {
+      // Center row is row index 1 across reels 0,1,2
+      const line = [ result[0][1], result[1][1], result[2][1] ];
+      const counts = {};
+      let wildCount = 0;
+
+      for (const s of line) {
+        if (s.name === WILD) wildCount++;
+        else counts[s.name] = (counts[s.name] || 0) + 1;
+      }
+
+      // Three wilds
+      if (wildCount === 3) {
+        return { win: true, symbol: WILD, payoutMult: symbols.find(s => s.name === WILD).payout, jackpot: false };
+      }
+
+      // Check if any non-wild symbol can be completed with wilds to make 3
+      let best = null;
+      for (const sym of symbols) {
+        if (sym.name === WILD) continue;
+        const c = counts[sym.name] || 0;
+        if (c + wildCount >= 3) {
+          // Prefer the highest payout in ambiguous cases
+          if (!best || sym.payout > best.payoutMult) {
+            best = { win: true, symbol: sym.name, payoutMult: sym.payout, jackpot: sym.name === JACKPOT };
+          }
+        }
+      }
+
+      if (best) return best;
+
+      return { win: false, symbol: null, payoutMult: 0, jackpot: false };
+    }
+
+    function setColumn(reelIndex, icons) {
+      // icons: array of 3 emoji strings
+      for (let i = 0; i < 3; i++) {
+        reelCells[reelIndex][i].textContent = icons[i];
+      }
+    }
+
+    function animateSpin(finalResult) {
+      // Spin reels with intervals and stop sequentially
+      const spinIntervals = [null, null, null];
+      const startTime = performance.now();
+      const stopTimes = [1500, 1800, 2100]; // ms: R1, R2, R3
+
+      for (let r = 0; r < 3; r++) {
+        spinIntervals[r] = setInterval(() => {
+          // Random transient symbols while spinning
+          const temp = [weightedRandomSymbol().icon, weightedRandomSymbol().icon, weightedRandomSymbol().icon];
+          setColumn(r, temp);
+        }, 90 + r * 15);
+      }
+
+      function tryStop() {
+        const elapsed = performance.now() - startTime;
+
+        for (let r = 0; r < 3; r++) {
+          if (spinIntervals[r] && elapsed >= stopTimes[r]) {
+            clearInterval(spinIntervals[r]);
+            spinIntervals[r] = null;
+
+            // Set final symbols for this reel
+            setColumn(r, [
+              finalResult[r][0].icon,
+              finalResult[r][1].icon,
+              finalResult[r][2].icon
+            ]);
+
+            // Small pulse effect when a reel stops
+            reelCells[r][0].parentElement.classList.add('ring-1','ring-cyan-400/30');
+            setTimeout(() => {
+              reelCells[r][0].parentElement.classList.remove('ring-1','ring-cyan-400/30');
+            }, 180);
+          }
+        }
+
+        if (!spinIntervals[0] && !spinIntervals[1] && !spinIntervals[2]) {
+          resolveOutcome(finalResult);
+          return;
+        }
+
+        requestAnimationFrame(tryStop);
+      }
+
+      requestAnimationFrame(tryStop);
+    }
+
+    function resolveOutcome(result) {
+      const outcome = evaluateMiddleRow(result);
+
+      if (outcome.win) {
+        const winAmount = bet * outcome.payoutMult;
+        credits += winAmount;
+        if (outcome.jackpot) {
+          setStatus(`JACKPOT! You won ${winAmount} credits!`, 'jackpot');
+        } else {
+          const symIcon = symbols.find(s => s.name === outcome.symbol)?.icon || '';
+          setStatus(`WINNER! +${winAmount} Credits! ${symIcon}`, 'success');
+        }
+      } else {
+        setStatus('No Luck. Try Again!', 'warn');
+      }
+
+      spinning = false;
+      updateUI();
+    }
+
+    function onSpin() {
+      if (spinning) return;
+
+      if (credits <= 0 || credits < bet) {
+        setStatus('INSUFFICIENT FUNDS!', 'error');
+        return;
+      }
+
+      // Deduct bet upfront
+      credits -= bet;
+      updateUI();
+
+      setStatus('Spinning...', 'info');
+      spinning = true;
+      updateUI();
+
+      const finalResult = createSpinResult();
+      animateSpin(finalResult);
+    }
+
+    // Bet Controls
+    betUp.addEventListener('click', () => {
+      if (spinning) return;
+      bet = Math.min(maxBet, bet + betStep);
+      updateUI();
+    });
+
+    betDown.addEventListener('click', () => {
+      if (spinning) return;
+      bet = Math.max(minBet, bet - betStep);
+      updateUI();
+    });
+
+    spinButton.addEventListener('click', onSpin);
+
+    // Initialize
+    updateUI();
+  </script>
+</body>
 </html>
