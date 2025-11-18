@@ -18,76 +18,52 @@
     }
     html, body {
       height: 100%;
-      background: radial-gradient(1200px 800px at 50% -10%, rgba(185,0,255,0.25), transparent 60%),
-                  radial-gradient(1000px 700px at 100% 0%, rgba(0,255,255,0.18), transparent 60%),
-                  #050016;
+      background:
+        radial-gradient(1200px 800px at 50% -10%, rgba(185,0,255,0.25), transparent 60%),
+        radial-gradient(1000px 700px at 100% 0%, rgba(0,255,255,0.18), transparent 60%),
+        #050016;
       color: #e7e5ff;
       font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     }
-    .cosmic-card {
-      backdrop-filter: blur(10px);
-      background: linear-gradient(180deg, rgba(20,10,50,0.75), rgba(10,5,30,0.85));
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow:
-        0 10px 35px rgba(0,0,0,0.5),
-        0 0 0 1px rgba(255,255,255,0.06) inset;
-    }
-    .neon-border {
-      position: relative;
-      border-radius: 1.25rem;
-    }
-    .neon-border::before {
+    .starfield::before, .starfield::after {
       content: "";
-      position: absolute;
-      inset: -2px;
-      border-radius: inherit;
-      background: conic-gradient(from 180deg at 50% 50%, var(--neon-pink), var(--neon-cyan), var(--neon-gold), var(--neon-pink));
-      filter: blur(12px);
-      opacity: 0.6;
-      z-index: -1;
+      position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.35), transparent 40%),
+        radial-gradient(1.5px 1.5px at 70% 10%, rgba(0,229,255,0.45), transparent 40%),
+        radial-gradient(1.5px 1.5px at 40% 70%, rgba(255,63,164,0.5), transparent 40%),
+        radial-gradient(2px 2px at 80% 60%, rgba(255,210,0,0.5), transparent 40%);
+      animation: twinkle 6s infinite;
     }
-    .reel-cell {
-      text-shadow:
-        0 0 10px rgba(255, 255, 255, 0.25),
-        0 0 20px rgba(0, 229, 255, 0.25);
-      user-select: none;
-    }
-    .spin-button {
-      transition: transform 0.05s ease, box-shadow 0.2s ease;
-    }
-    .spin-button:active {
-      transform: translateY(1px);
-    }
-    .status-box {
-      min-height: 2.25rem;
-    }
-    .glow-text {
-      text-shadow:
-        0 0 10px rgba(255, 208, 0, 0.3),
-        0 0 30px rgba(255, 63, 164, 0.15);
-    }
-    .soft-gradient {
-      background: linear-gradient(90deg, rgba(255,63,164,0.12), rgba(0,229,255,0.12));
-    }
-    .gold-gradient {
-      background: linear-gradient(180deg, rgba(255,210,0,0.18), rgba(255,210,0,0.05));
-    }
-    .flicker {
-      animation: flicker 3s infinite;
-    }
-    @keyframes flicker {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.95; }
-      70% { opacity: 0.85; }
-      80% { opacity: 0.98; }
-      90% { opacity: 0.92; }
-    }
+    .starfield::after { animation-delay: 3s; opacity: .7; }
+    @keyframes twinkle { 0%, 100% { opacity: .4 } 50% { opacity: 1 } }
+
+    .cosmic-card { backdrop-filter: blur(10px); background: linear-gradient(180deg, rgba(20,10,50,0.75), rgba(10,5,30,0.85)); border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 10px 35px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06) inset; }
+    .neon-border { position: relative; border-radius: 1.25rem; }
+    .neon-border::before { content: ""; position: absolute; inset: -2px; border-radius: inherit; background: conic-gradient(from 180deg at 50% 50%, var(--neon-pink), var(--neon-cyan), var(--neon-gold), var(--neon-pink)); filter: blur(12px); opacity: 0.6; z-index: -1; }
+
+    .reel-cell { text-shadow: 0 0 10px rgba(255, 255, 255, 0.25), 0 0 20px rgba(0, 229, 255, 0.25); user-select: none; transition: transform .2s ease, filter .2s ease, background .2s ease; }
+    .reel-spinning .reel-cell { filter: blur(1.5px) brightness(1.1); }
+
+    .spin-button { transition: transform 0.05s ease, box-shadow 0.2s ease; position: relative; overflow: hidden; }
+    .spin-button:active { transform: translateY(1px); }
+    .spin-button::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120px 120px at var(--x,50%) var(--y,50%), rgba(255,255,255,0.35), transparent 60%); opacity: 0; transition: opacity .25s; }
+    .spin-button:hover::after { opacity: .25; }
+
+    .status-box { min-height: 2.25rem; }
+    .glow-text { text-shadow: 0 0 10px rgba(255, 208, 0, 0.3), 0 0 30px rgba(255, 63, 164, 0.15); }
+    .soft-gradient { background: linear-gradient(90deg, rgba(255,63,164,0.12), rgba(0,229,255,0.12)); }
+    .gold-gradient { background: linear-gradient(180deg, rgba(255,210,0,0.18), rgba(255,210,0,0.05)); }
+    .flicker { animation: flicker 3s infinite; }
+    @keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.95; } 70% { opacity: 0.85; } 80% { opacity: 0.98; } 90% { opacity: 0.92; } }
+
+    .payline-on .reel-mid { background: linear-gradient(90deg, rgba(255,63,164,0.28), rgba(0,229,255,0.22)) !important; box-shadow: inset 0 0 30px rgba(255,210,0,0.2); }
+    .jackpot-burst { position: absolute; inset: 0; pointer-events: none; }
   </style>
 </head>
 <body class="overflow-x-hidden">
-
   <!-- Hero with Spline -->
-  <section class="relative w-full h-[40vh] md:h-[50vh] overflow-hidden">
+  <section class="relative w-full h-[40vh] md:h-[50vh] overflow-hidden starfield">
     <div class="absolute inset-0">
       <spline-viewer url="https://prod.spline.design/EF7JOSsHLk16Tlw9/scene.splinecode" style="width:100%;height:100%;"></spline-viewer>
     </div>
@@ -108,19 +84,39 @@
   <main class="relative -mt-10 md:-mt-14 pb-16">
     <div class="max-w-5xl mx-auto px-6">
       <div class="neon-border cosmic-card rounded-2xl p-6 md:p-8 z-20">
+        <!-- Toolbar -->
+        <div class="flex items-center justify-between gap-4 pb-4 border-b border-white/10">
+          <div class="text-xs text-cyan-100/70">Play responsibly. Set limits. Take breaks.</div>
+          <div class="flex items-center gap-2">
+            <button id="muteToggle" class="px-3 py-1.5 rounded-lg border border-white/10 text-cyan-100/80 hover:text-white hover:border-cyan-400/40">🔊 Sound</button>
+            <button id="helpBtn" class="px-3 py-1.5 rounded-lg border border-white/10 text-cyan-100/80 hover:text-white hover:border-cyan-400/40" title="Controls: Space = Spin, +/- = Bet, 1-5 = Quick Bets">❔ Help</button>
+          </div>
+        </div>
+
         <!-- Header: Credits & Bet -->
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div class="mt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div class="flex items-center gap-6 w-full">
             <div class="flex-1 soft-gradient rounded-xl p-4 border border-white/10">
               <div class="text-sm uppercase tracking-wider text-cyan-200/70">Credits</div>
               <div id="creditsDisplay" class="mt-1 text-2xl md:text-3xl font-black text-yellow-300 glow-text">1000</div>
             </div>
-            <div class="flex-1 soft-gradient rounded-xl p-4 border border-white/10">
-              <div class="text-sm uppercase tracking-wider text-cyan-200/70">Bet</div>
+            <div class="flex-[1.2] soft-gradient rounded-xl p-4 border border-white/10">
+              <div class="flex items-center justify-between">
+                <div class="text-sm uppercase tracking-wider text-cyan-200/70">Bet</div>
+                <div class="text-[10px] text-cyan-200/60">Min 10 · Max 500</div>
+              </div>
               <div class="mt-1 flex items-center gap-3">
                 <button id="betDown" class="h-9 w-9 rounded-lg border border-white/10 text-cyan-200 hover:text-white hover:border-cyan-400/40 disabled:opacity-50 disabled:cursor-not-allowed">−</button>
-                <div id="betDisplay" class="text-2xl md:text-3xl font-black text-pink-300 glow-text">100</div>
+                <div id="betDisplay" class="text-2xl md:text-3xl font-black text-pink-300 glow-text min-w-[3ch] text-center">100</div>
                 <button id="betUp" class="h-9 w-9 rounded-lg border border-white/10 text-cyan-200 hover:text-white hover:border-cyan-400/40 disabled:opacity-50 disabled:cursor-not-allowed">+</button>
+              </div>
+              <!-- Quick bets -->
+              <div class="mt-3 flex flex-wrap gap-2 text-xs">
+                <button data-bet="10" class="qb px-2.5 py-1 rounded-md border border-white/10 text-cyan-200/80 hover:border-cyan-400/40">10</button>
+                <button data-bet="50" class="qb px-2.5 py-1 rounded-md border border-white/10 text-cyan-200/80 hover:border-cyan-400/40">50</button>
+                <button data-bet="100" class="qb px-2.5 py-1 rounded-md border border-white/10 text-cyan-200/80 hover:border-cyan-400/40">100</button>
+                <button data-bet="250" class="qb px-2.5 py-1 rounded-md border border-white/10 text-cyan-200/80 hover:border-cyan-400/40">250</button>
+                <button data-bet="500" class="qb px-2.5 py-1 rounded-md border border-white/10 text-cyan-200/80 hover:border-cyan-400/40">500</button>
               </div>
             </div>
           </div>
@@ -133,12 +129,12 @@
         </div>
 
         <!-- Reels -->
-        <div class="mt-8 grid grid-cols-3 gap-4">
+        <div id="reelWrap" class="mt-8 grid grid-cols-3 gap-4">
           <!-- Each column represents a reel (3 rows each) -->
           <div class="gold-gradient rounded-xl p-3 border border-yellow-300/10 shadow-lg shadow-yellow-500/10">
             <div class="grid grid-rows-3 gap-3">
               <div class="reel-cell text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="0" data-row="0">🌟</div>
-              <div class="reel-cell text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="0" data-row="1">🪐</div>
+              <div class="reel-cell reel-mid text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="0" data-row="1">🪐</div>
               <div class="reel-cell text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="0" data-row="2">💎</div>
             </div>
           </div>
@@ -146,7 +142,7 @@
           <div class="gold-gradient rounded-xl p-3 border border-yellow-300/10 shadow-lg shadow-yellow-500/10">
             <div class="grid grid-rows-3 gap-3">
               <div class="reel-cell text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="1" data-row="0">💎</div>
-              <div class="reel-cell text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="1" data-row="1">🌟</div>
+              <div class="reel-cell reel-mid text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="1" data-row="1">🌟</div>
               <div class="reel-cell text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="1" data-row="2">🛸</div>
             </div>
           </div>
@@ -154,7 +150,7 @@
           <div class="gold-gradient rounded-xl p-3 border border-yellow-300/10 shadow-lg shadow-yellow-500/10">
             <div class="grid grid-rows-3 gap-3">
               <div class="reel-cell text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="2" data-row="0">🪐</div>
-              <div class="reel-cell text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="2" data-row="1">🚀</div>
+              <div class="reel-cell reel-mid text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="2" data-row="1">🚀</div>
               <div class="reel-cell text-4xl md:text-5xl flex items-center justify-center h-20 md:h-24 rounded-lg bg-black/30 border border-white/10" data-reel="2" data-row="2">🌟</div>
             </div>
           </div>
@@ -167,28 +163,20 @@
 
         <!-- Legend -->
         <div class="mt-6 grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
-          <div class="rounded-lg border border-white/10 bg-black/20 p-3 flex items-center justify-center gap-2">
-            <span>🌟</span><span class="text-cyan-100/80">x3 = 3x</span>
-          </div>
-          <div class="rounded-lg border border-white/10 bg-black/20 p-3 flex items-center justify-center gap-2">
-            <span>🪐</span><span class="text-cyan-100/80">x3 = 5x</span>
-          </div>
-          <div class="rounded-lg border border-white/10 bg-black/20 p-3 flex items-center justify-center gap-2">
-            <span>💎</span><span class="text-cyan-100/80">x3 = 10x</span>
-          </div>
-          <div class="rounded-lg border border-white/10 bg-black/20 p-3 flex items-center justify-center gap-2">
-            <span>🚀</span><span class="text-cyan-100/80">x3 = 20x (Wild)</span>
-          </div>
-          <div class="rounded-lg border border-white/10 bg-black/20 p-3 flex items-center justify-center gap-2">
-            <span>🛸</span><span class="text-cyan-100/80">x3 = 50x (Jackpot)</span>
-          </div>
+          <div class="rounded-lg border border-white/10 bg-black/20 p-3 flex items-center justify-center gap-2"><span>🌟</span><span class="text-cyan-100/80">x3 = 3x</span></div>
+          <div class="rounded-lg border border-white/10 bg-black/20 p-3 flex items-center justify-center gap-2"><span>🪐</span><span class="text-cyan-100/80">x3 = 5x</span></div>
+          <div class="rounded-lg border border-white/10 bg-black/20 p-3 flex items-center justify-center gap-2"><span>💎</span><span class="text-cyan-100/80">x3 = 10x</span></div>
+          <div class="rounded-lg border border-white/10 bg-black/20 p-3 flex items-center justify-center gap-2"><span>🚀</span><span class="text-cyan-100/80">x3 = 20x (Wild)</span></div>
+          <div class="rounded-lg border border-white/10 bg-black/20 p-3 flex items-center justify-center gap-2"><span>🛸</span><span class="text-cyan-100/80">x3 = 50x (Jackpot)</span></div>
         </div>
+
+        <canvas id="confetti" class="jackpot-burst"></canvas>
       </div>
     </div>
   </main>
 
   <script>
-    // Game State
+    // ---------- Game Config ----------
     const symbols = [
       { icon: '🌟', name: 'star', payout: 3, weight: 40 },   // Low
       { icon: '🪐', name: 'planet', payout: 5, weight: 30 }, // Medium
@@ -196,23 +184,28 @@
       { icon: '🚀', name: 'wild', payout: 20, weight: 8 },   // Wild
       { icon: '🛸', name: 'jackpot', payout: 50, weight: 2 } // Jackpot
     ];
-
     const WILD = 'wild';
     const JACKPOT = 'jackpot';
 
+    // ---------- State ----------
     let credits = 1000;
     let bet = 100;
     const minBet = 10;
     const maxBet = 500;
     const betStep = 10;
+    let spinning = false;
+    let soundOn = true;
 
-    // UI Elements
+    // ---------- UI Elements ----------
     const creditsDisplay = document.getElementById('creditsDisplay');
     const betDisplay = document.getElementById('betDisplay');
     const betUp = document.getElementById('betUp');
     const betDown = document.getElementById('betDown');
     const spinButton = document.getElementById('spinButton');
     const statusMessage = document.getElementById('statusMessage');
+    const reelWrap = document.getElementById('reelWrap');
+    const confetti = document.getElementById('confetti');
+    const muteToggle = document.getElementById('muteToggle');
 
     const reelCells = [
       [
@@ -232,7 +225,17 @@
       ],
     ];
 
-    let spinning = false;
+    // ---------- Helpers ----------
+    function animateNumber(el, from, to, duration = 500) {
+      const start = performance.now();
+      function step(t) {
+        const p = Math.min(1, (t - start) / duration);
+        const val = Math.round(from + (to - from) * (1 - Math.pow(1 - p, 3))); // easeOutCubic
+        el.textContent = val;
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
 
     function updateUI() {
       creditsDisplay.textContent = credits;
@@ -242,26 +245,21 @@
       spinButton.disabled = spinning;
       spinButton.classList.toggle('opacity-60', spinning);
       spinButton.classList.toggle('cursor-not-allowed', spinning);
+      // Payline visual
+      reelWrap.classList.toggle('payline-on', !spinning);
     }
 
     function setStatus(text, type = 'info') {
       statusMessage.textContent = text;
       statusMessage.className = 'text-center font-semibold tracking-wide';
-
-      if (type === 'info') {
-        statusMessage.classList.add('text-cyan-100');
-      } else if (type === 'warn') {
-        statusMessage.classList.add('text-yellow-200');
-      } else if (type === 'error') {
-        statusMessage.classList.add('text-pink-200');
-      } else if (type === 'success') {
-        statusMessage.classList.add('text-green-200');
-      }
-      if (type === 'jackpot') {
-        statusMessage.classList.add('text-yellow-200', 'flicker');
-      } else {
-        statusMessage.classList.remove('flicker');
-      }
+      const cls = {
+        info: 'text-cyan-100',
+        warn: 'text-yellow-200',
+        error: 'text-pink-200',
+        success: 'text-green-200',
+        jackpot: 'text-yellow-200 flicker'
+      }[type];
+      if (cls) cls.split(' ').forEach(c=>statusMessage.classList.add(c));
     }
 
     function weightedRandomSymbol() {
@@ -275,7 +273,6 @@
     }
 
     function createSpinResult() {
-      // Generate a 3x3 grid: result[reel][row]
       const result = [[], [], []];
       for (let reel = 0; reel < 3; reel++) {
         for (let row = 0; row < 3; row++) {
@@ -286,148 +283,145 @@
     }
 
     function evaluateMiddleRow(result) {
-      // Center row is row index 1 across reels 0,1,2
       const line = [ result[0][1], result[1][1], result[2][1] ];
-      const counts = {};
-      let wildCount = 0;
-
-      for (const s of line) {
-        if (s.name === WILD) wildCount++;
-        else counts[s.name] = (counts[s.name] || 0) + 1;
-      }
-
-      // Three wilds
-      if (wildCount === 3) {
-        return { win: true, symbol: WILD, payoutMult: symbols.find(s => s.name === WILD).payout, jackpot: false };
-      }
-
-      // Check if any non-wild symbol can be completed with wilds to make 3
+      const counts = {}; let wildCount = 0;
+      for (const s of line) { if (s.name === WILD) wildCount++; else counts[s.name] = (counts[s.name] || 0) + 1; }
+      if (wildCount === 3) return { win: true, symbol: WILD, payoutMult: symbols.find(s => s.name === WILD).payout, jackpot: false };
       let best = null;
       for (const sym of symbols) {
         if (sym.name === WILD) continue;
         const c = counts[sym.name] || 0;
         if (c + wildCount >= 3) {
-          // Prefer the highest payout in ambiguous cases
-          if (!best || sym.payout > best.payoutMult) {
-            best = { win: true, symbol: sym.name, payoutMult: sym.payout, jackpot: sym.name === JACKPOT };
-          }
+          if (!best || sym.payout > best.payoutMult) best = { win: true, symbol: sym.name, payoutMult: sym.payout, jackpot: sym.name === JACKPOT };
         }
       }
-
-      if (best) return best;
-
-      return { win: false, symbol: null, payoutMult: 0, jackpot: false };
+      return best || { win: false, symbol: null, payoutMult: 0, jackpot: false };
     }
 
-    function setColumn(reelIndex, icons) {
-      // icons: array of 3 emoji strings
-      for (let i = 0; i < 3; i++) {
-        reelCells[reelIndex][i].textContent = icons[i];
-      }
-    }
+    function setColumn(reelIndex, icons) { for (let i = 0; i < 3; i++) reelCells[reelIndex][i].textContent = icons[i]; }
 
+    // ---------- Sounds (WebAudio minimal) ----------
+    const AudioCtx = window.AudioContext || window.webkitAudioContext; let actx; let clickAllowed=false;
+    function ensureAudio() { if (!actx) actx = new AudioCtx(); }
+    function beep(freq=440, dur=0.08, type='sine', gain=0.03){ if (!soundOn) return; ensureAudio(); const o=actx.createOscillator(); const g=actx.createGain(); o.type=type; o.frequency.value=freq; g.gain.value=gain; o.connect(g); g.connect(actx.destination); o.start(); o.stop(actx.currentTime+dur); }
+    function chord(){ beep(660,0.09,'triangle',0.04); setTimeout(()=>beep(990,0.1,'triangle',0.04),60); }
+
+    // ---------- Confetti (Jackpot) ----------
+    function burstConfetti(){ const ctx=confetti.getContext('2d'); const {width,height}=confetti.getBoundingClientRect(); confetti.width=width*devicePixelRatio; confetti.height=height*devicePixelRatio; const count=120; const parts=[]; for(let i=0;i<count;i++){ parts.push({x:Math.random()*confetti.width,y:-10,vy:2+Math.random()*3,vx:(Math.random()-.5)*2,size:2+Math.random()*3,color:`hsl(${Math.random()*360},90%,60%)`,life:60+Math.random()*40}); }
+      let frame; (function anim(){ ctx.clearRect(0,0,confetti.width,confetti.height); parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy*2; p.vy+=0.02; p.life--; ctx.fillStyle=p.color; ctx.fillRect(p.x,p.y,p.size*devicePixelRatio,p.size*devicePixelRatio);}); if(parts.some(p=>p.life>0)){ frame=requestAnimationFrame(anim);} else { cancelAnimationFrame(frame); ctx.clearRect(0,0,confetti.width,confetti.height);} })(); }
+
+    // ---------- Spin Animation ----------
     function animateSpin(finalResult) {
-      // Spin reels with intervals and stop sequentially
       const spinIntervals = [null, null, null];
       const startTime = performance.now();
-      const stopTimes = [1500, 1800, 2100]; // ms: R1, R2, R3
+      const stopTimes = [1500, 1800, 2100];
+
+      reelWrap.classList.add('reel-spinning');
 
       for (let r = 0; r < 3; r++) {
         spinIntervals[r] = setInterval(() => {
-          // Random transient symbols while spinning
           const temp = [weightedRandomSymbol().icon, weightedRandomSymbol().icon, weightedRandomSymbol().icon];
           setColumn(r, temp);
-        }, 90 + r * 15);
+          // subtle scale wobble
+          reelCells[r].forEach((c,i)=>{ c.style.transform = `scale(${i===1?1.03:1})`; });
+        }, 80 + r * 15);
       }
 
       function tryStop() {
         const elapsed = performance.now() - startTime;
-
         for (let r = 0; r < 3; r++) {
           if (spinIntervals[r] && elapsed >= stopTimes[r]) {
             clearInterval(spinIntervals[r]);
             spinIntervals[r] = null;
-
-            // Set final symbols for this reel
-            setColumn(r, [
-              finalResult[r][0].icon,
-              finalResult[r][1].icon,
-              finalResult[r][2].icon
-            ]);
-
-            // Small pulse effect when a reel stops
+            setColumn(r, [ finalResult[r][0].icon, finalResult[r][1].icon, finalResult[r][2].icon ]);
+            reelCells[r].forEach((c)=>{ c.style.transform='scale(1)'; });
+            // pulse ring on stop
             reelCells[r][0].parentElement.classList.add('ring-1','ring-cyan-400/30');
-            setTimeout(() => {
-              reelCells[r][0].parentElement.classList.remove('ring-1','ring-cyan-400/30');
-            }, 180);
+            setTimeout(()=>reelCells[r][0].parentElement.classList.remove('ring-1','ring-cyan-400/30'),180);
+            beep(200+ r*80, 0.06, 'square', 0.02);
           }
         }
-
         if (!spinIntervals[0] && !spinIntervals[1] && !spinIntervals[2]) {
+          reelWrap.classList.remove('reel-spinning');
           resolveOutcome(finalResult);
           return;
         }
-
         requestAnimationFrame(tryStop);
       }
-
       requestAnimationFrame(tryStop);
+    }
+
+    // ---------- Outcome ----------
+    function highlightPaylineWin(){
+      document.querySelectorAll('.reel-mid').forEach(el=>{
+        el.classList.add('ring-2','ring-yellow-300/60');
+        el.style.background = 'linear-gradient(90deg, rgba(255,210,0,0.25), rgba(255,210,0,0.15))';
+        setTimeout(()=>{ el.classList.remove('ring-2','ring-yellow-300/60'); el.style.background=''; }, 800);
+      });
     }
 
     function resolveOutcome(result) {
       const outcome = evaluateMiddleRow(result);
-
       if (outcome.win) {
         const winAmount = bet * outcome.payoutMult;
-        credits += winAmount;
+        const fromCredits = credits; credits += winAmount;
+        animateNumber(creditsDisplay, fromCredits, credits, 600);
+        highlightPaylineWin();
         if (outcome.jackpot) {
           setStatus(`JACKPOT! You won ${winAmount} credits!`, 'jackpot');
+          chord(); setTimeout(chord, 120); burstConfetti();
         } else {
           const symIcon = symbols.find(s => s.name === outcome.symbol)?.icon || '';
           setStatus(`WINNER! +${winAmount} Credits! ${symIcon}`, 'success');
+          beep(880,0.08,'triangle',0.04);
         }
       } else {
         setStatus('No Luck. Try Again!', 'warn');
+        beep(220,0.06,'sine',0.02);
       }
-
-      spinning = false;
-      updateUI();
+      spinning = false; updateUI();
     }
 
-    function onSpin() {
+    // ---------- Interactions ----------
+    function onSpin(e) {
+      if (e && e.clientX) { spinButton.style.setProperty('--x', e.offsetX+'px'); spinButton.style.setProperty('--y', e.offsetY+'px'); }
       if (spinning) return;
-
-      if (credits <= 0 || credits < bet) {
-        setStatus('INSUFFICIENT FUNDS!', 'error');
-        return;
-      }
-
-      // Deduct bet upfront
-      credits -= bet;
-      updateUI();
-
-      setStatus('Spinning...', 'info');
-      spinning = true;
-      updateUI();
-
+      if (credits <= 0) { setStatus('INSUFFICIENT FUNDS!', 'error'); beep(100,0.1,'sawtooth',0.03); return; }
+      if (bet > credits) { bet = Math.max(minBet, Math.min(maxBet, Math.floor(credits / betStep) * betStep || minBet)); setStatus(`Bet adjusted to ${bet} due to credits.`, 'warn'); betDisplay.textContent = bet; }
+      credits -= bet; animateNumber(creditsDisplay, credits + bet, credits, 400);
+      setStatus('Spinning...', 'info'); spinning = true; updateUI();
+      beep(440,0.08,'square',0.03);
       const finalResult = createSpinResult();
       animateSpin(finalResult);
     }
 
     // Bet Controls
-    betUp.addEventListener('click', () => {
-      if (spinning) return;
-      bet = Math.min(maxBet, bet + betStep);
-      updateUI();
-    });
-
-    betDown.addEventListener('click', () => {
-      if (spinning) return;
-      bet = Math.max(minBet, bet - betStep);
-      updateUI();
-    });
+    betUp.addEventListener('click', () => { if (spinning) return; bet = Math.min(maxBet, bet + betStep); updateUI(); });
+    betDown.addEventListener('click', () => { if (spinning) return; bet = Math.max(minBet, bet - betStep); updateUI(); });
+    document.querySelectorAll('.qb').forEach(btn=>btn.addEventListener('click',()=>{ if (spinning) return; bet = Math.min(maxBet, parseInt(btn.dataset.bet,10)); updateUI(); }));
 
     spinButton.addEventListener('click', onSpin);
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown', (e)=>{
+      if (e.key === ' ') { e.preventDefault(); onSpin({}); }
+      if (e.key === '+') betUp.click();
+      if (e.key === '-') betDown.click();
+      if (['1','2','3','4','5'].includes(e.key)) {
+        const map = { '1':10,'2':50,'3':100,'4':250,'5':500 };
+        const btn = [...document.querySelectorAll('.qb')].find(b=>+b.dataset.bet===map[e.key]); if (btn) btn.click();
+      }
+    });
+
+    // Mute toggle
+    muteToggle.addEventListener('click', ()=>{ soundOn = !soundOn; muteToggle.textContent = soundOn ? '🔊 Sound' : '🔇 Muted'; });
+
+    // First gesture unlock audio
+    document.addEventListener('pointerdown', ()=>{ try{ ensureAudio(); if (actx && actx.state==='suspended') actx.resume(); }catch{} }, { once:true });
+
+    // Responsive confetti canvas
+    const resizeConfetti = ()=>{ const r = document.querySelector('.neon-border'); const rect = r.getBoundingClientRect(); const cRect = confetti.getBoundingClientRect(); confetti.style.width = rect.width+'px'; confetti.style.height = rect.height+'px'; confetti.width = rect.width*devicePixelRatio; confetti.height = rect.height*devicePixelRatio; };
+    window.addEventListener('resize', resizeConfetti); setTimeout(resizeConfetti, 50);
 
     // Initialize
     updateUI();
